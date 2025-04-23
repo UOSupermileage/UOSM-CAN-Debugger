@@ -9,4 +9,6 @@
 
 bool CAN_Init();
 
+void CAN_Receive();
+void CAN_Send();
 #endif //UOSM_CAN_DEBUGGER_NETWORK_H

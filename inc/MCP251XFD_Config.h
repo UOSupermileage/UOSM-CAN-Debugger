@@ -37,7 +37,8 @@
 #define MCP251XFD_TRANS_BUF_SIZE  ( 2+1+8+64+4+2 ) // here it is set to 1 full CAN-FD frame with CRC (2 for Cmd + 1 for length + 8 for CAN frame + 64 for CAN-FD max payload + 4 for time stamp + 2 for CRC)
 
 
-
+#define TIMESTAMP_TICK_us ( 25 ) // TimeStamp tick is 25µs
+#define TIMESTAMP_TICK(sysclk) ( ((sysclk) / 1000000) * TIMESTAMP_TICK_us )
 
 
 //-----------------------------------------------------------------------------
