@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/UOSM-CAN-Debugger.iml" filepath="$PROJECT_DIR$/.idea/UOSM-CAN-Debugger.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/pico.iml" filepath="$PROJECT_DIR$/.idea/pico.iml" />
     </modules>
   </component>
 </project>

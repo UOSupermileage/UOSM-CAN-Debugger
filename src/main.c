@@ -27,7 +27,7 @@ int main() {
     while (true) {
         CAN_Receive();
 
-        CAN_Send();
+        // CAN_Send();
 
         if (tud_cdc_available()) {
             char buf[64];

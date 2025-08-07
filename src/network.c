@@ -71,6 +71,14 @@ void CAN_Receive() {
                 if (ErrorExt1 == ERR_OK) {
                     //***** Do what you want with the message *****
                     printf("Message received!");
+                    printf("Message ID: %d\n", ReceivedMessage.MessageID);
+                    printf("Message Timestamp: %d\n", MessageTimeStamp);
+                    printf("Message DLC: %d\n", ReceivedMessage.DLC);
+                    printf("Message Payload: ");
+                    for (int i = 0; i < ReceivedMessage.DLC; i++) {
+                        printf("%02X ", ReceivedMessage.PayloadData[i]);
+                    }
+                    printf("\n");
                     gpio_put(PICO_DEFAULT_LED_PIN, 1);
 
                 }
