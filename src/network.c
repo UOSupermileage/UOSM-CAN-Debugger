@@ -37,7 +37,8 @@ bool CAN_Init() {
     if (ErrorExt1 != ERR_OK)
         return false;
 
-    ErrorExt1 = MCP251XFD_StartCANFD(CANEXT1);
+    // ErrorExt1 = MCP251XFD_StartCANFD(CANEXT1);
+    ErrorExt1 = MCP251XFD_StartCANListenOnly(CANEXT1);
     if (ErrorExt1 != ERR_OK)
         return false;
 
@@ -48,18 +49,22 @@ void CAN_Receive() {
     eERRORRESULT ErrorExt1 = ERR_OK;
     eMCP251XFD_FIFOstatus FIFOstatus = 0;
     setMCP251XFD_InterruptOnFIFO InterruptOnFIFO = 0;
+   // printf("in here");
 
     ErrorExt1 = MCP251XFD_GetReceivePendingInterruptStatusOfAllFIFO(CANEXT1, &InterruptOnFIFO); // Get all FIFO status
-    if (ErrorExt1 != ERR_OK)
-        return;
+    if (ErrorExt1 != ERR_OK){
+       // printf("in here2");
+        return;}
 
     for (eMCP251XFD_FIFO zFIFO = 1; zFIFO < MCP251XFD_FIFO_MAX; zFIFO++) { // For each receive FIFO but not TEF, TXQ
         if ((InterruptOnFIFO & (1 << zFIFO)) > 0) { // If an Interrupt is flagged
             ErrorExt1 = MCP251XFD_GetFIFOStatus(CANEXT1, zFIFO, &FIFOstatus); // Get the status of the flagged FIFO
-            if (ErrorExt1 != ERR_OK)
-                return;
+            if (ErrorExt1 != ERR_OK){
+              //  printf("in here3");
+            return;}
 
             if ((FIFOstatus & MCP251XFD_RX_FIFO_NOT_EMPTY) > 0) { // Check FIFO not empty
+               // printf("in if statement");
                 uint32_t MessageTimeStamp = 0;
                 uint8_t RxPayloadData[8]; // In this example, all the FIFO have 8 bytes of payload
                 MCP251XFD_CANMessage ReceivedMessage;
@@ -71,6 +76,14 @@ void CAN_Receive() {
                 if (ErrorExt1 == ERR_OK) {
                     //***** Do what you want with the message *****
                     printf("Message received!");
+                    printf("Message ID: %d\n", ReceivedMessage.MessageID);
+                    printf("Message Timestamp: %d\n", MessageTimeStamp);
+                    printf("Message DLC: %d\n", ReceivedMessage.DLC);
+                    printf("Message Payload: ");
+                    for (int i = 0; i < ReceivedMessage.DLC; i++) {
+                        printf("%02X ", ReceivedMessage.PayloadData[i]);
+                    }
+                    printf("\n");
                     gpio_put(PICO_DEFAULT_LED_PIN, 1);
 
                 }
