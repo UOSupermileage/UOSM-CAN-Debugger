@@ -14,10 +14,10 @@ pico_sdk_init()
 set(CMAKE_C_STANDARD 23)
 
 
-file(GLOB SOURCES src/*.c)
+file(GLOB SOURCES src/*.c UOSM-Core/*.*)
 
 add_executable(${NAME} ${SOURCES})
-target_include_directories(${NAME} PUBLIC inc)
+target_include_directories(${NAME} PUBLIC inc UOSM-Core/Inc UOSM-Core/Drivers UOSM-Core/Modules UOSM-Core/Utils)
 
 target_link_libraries(${NAME}
         pico_stdlib

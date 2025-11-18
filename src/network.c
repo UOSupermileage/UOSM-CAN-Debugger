@@ -8,6 +8,9 @@
 #include <hardware/gpio.h>
 #include <pico/printf.h>
 
+#include "ApplicationTypes.h"
+#include "msg_interpreter.h"
+
 #define MCP_INT_PIN 22
 
 void gpio_callback(uint gpio, uint32_t events) {
@@ -79,11 +82,8 @@ void CAN_Receive() {
                     printf("Message ID: %d\n", ReceivedMessage.MessageID);
                     printf("Message Timestamp: %d\n", MessageTimeStamp);
                     printf("Message DLC: %d\n", ReceivedMessage.DLC);
-                    printf("Message Payload: ");
-                    for (int i = 0; i < ReceivedMessage.DLC; i++) {
-                        printf("%02X ", ReceivedMessage.PayloadData[i]);
-                    }
-                    printf("\n");
+
+                    MsgInterpreter_ProcessMessage(ReceivedMessage.MessageID,ReceivedMessage.PayloadData);
                     gpio_put(PICO_DEFAULT_LED_PIN, 1);
 
                 }
@@ -98,26 +98,50 @@ void CAN_Send() {
     ErrorExt1 = MCP251XFD_GetFIFOStatus(CANEXT1, MCP251XFD_TXQ, &FIFOstatus); // First get FIFO2 status
     if (ErrorExt1 != ERR_OK)
         return;
+    //
+    // int32_t velocity = 123;
+    // uint8_t data[8];
+    // data[0] = velocity;
+    // data[1] = velocity >> 8;
+    // data[2] = velocity >> 16;
+    // data[3] = velocity >> 24;
 
-    int32_t velocity = 123;
-    uint8_t data[8];
-    data[0] = velocity;
-    data[1] = velocity >> 8;
-    data[2] = velocity >> 16;
-    data[3] = velocity >> 24;
+    lights_status_t lights = {0};
+    lights.hazards_enabled = 1;
+    lights.left_turn_enabled = 0;
+    lights.right_turn_enabled = 0;
+    lights.headlights_enabled = 0;
+    lights.low_beams_enabled = 0;
+
+    lights.r = 255;
+    lights.g = 0;
+    lights.b = 25;
+
+    uint32_t raw = lights.all;
+    uint8_t data[4];
+    data[0] = (raw >> 24) & 0xFF;
+    data[1] = (raw >> 16) & 0xFF;
+    data[2] = (raw >> 8) & 0xFF;
+    data[3] = raw & 0xFF;
+
 
     if ((FIFOstatus & MCP251XFD_TX_FIFO_NOT_FULL) > 0) // Second check FIFO not full
     {
 
         MCP251XFD_CANMessage TansmitMessage;
-        //***** Fill the message as you want *****
-        TansmitMessage.MessageID = 2;
+        //***** Fill the message as you want *****3
+        TansmitMessage.MessageID = 6;
         //TansmitMessage.MessageSEQ = messageSEQ;
         //TansmitMessage.ControlFlags = controlFlags;
         TansmitMessage.DLC = 4;
-        TansmitMessage.PayloadData = &data[0];
+        TansmitMessage.PayloadData = data;
         // Send message and flush
         ErrorExt1 = MCP251XFD_TransmitMessageToFIFO(CANEXT1, &TansmitMessage, MCP251XFD_TXQ, true);
+
+        if (ErrorExt1 != ERR_OK)
+        {
+            printf("Transmission failed: %d\n", ErrorExt1);
+        }
     } else {
         printf("FIFO full. Cannot send CAN message\n");
     }
