@@ -40,8 +40,8 @@ bool CAN_Init() {
     if (ErrorExt1 != ERR_OK)
         return false;
 
-    // ErrorExt1 = MCP251XFD_StartCANFD(CANEXT1);
-    ErrorExt1 = MCP251XFD_StartCANListenOnly(CANEXT1);
+    ErrorExt1 = MCP251XFD_StartCAN20(CANEXT1);
+    //ErrorExt1 = MCP251XFD_StartCANListenOnly(CANEXT1);
     if (ErrorExt1 != ERR_OK)
         return false;
 
@@ -127,7 +127,6 @@ void CAN_Send() {
 
     if ((FIFOstatus & MCP251XFD_TX_FIFO_NOT_FULL) > 0) // Second check FIFO not full
     {
-
         MCP251XFD_CANMessage TansmitMessage;
         //***** Fill the message as you want *****3
         TansmitMessage.MessageID = 6;
@@ -141,6 +140,46 @@ void CAN_Send() {
         if (ErrorExt1 != ERR_OK)
         {
             printf("Transmission failed: %d\n", ErrorExt1);
+        }
+    } else {
+        printf("FIFO full. Cannot send CAN message\n");
+    }
+}
+void Flush(){
+    eERRORRESULT ErrorExt1 = ERR_OK;
+    ErrorExt1 = MCP251XFD_FlushFIFO(CANEXT1, MCP251XFD_TXQ);
+    if (ErrorExt1 != ERR_OK)
+        printf("Flush failed: %d\n", ErrorExt1);
+    else{
+        printf("Flush successful\n");
+    }
+}
+
+void CAN_Send_Throttle(uint16_t* throttle) {
+    eERRORRESULT ErrorExt1 = ERR_OK;
+    eMCP251XFD_FIFOstatus FIFOstatus = 0;
+    ErrorExt1 = MCP251XFD_GetFIFOStatus(CANEXT1, MCP251XFD_FIFO2, &FIFOstatus); // First get FIFO2 status
+    if (ErrorExt1 != ERR_OK)
+        return;
+
+    //if ((FIFOstatus & MCP251XFD_TX_FIFO_NOT_FULL) > 0) // Second check FIFO not full
+    if((FIFOstatus & MCP251XFD_TX_FIFO_NOT_FULL) > 0)
+    {
+        MCP251XFD_CANMessage TransmitMessage;
+        //***** Fill the message as you want *****3
+        TransmitMessage.MessageID = 0;
+        //TansmitMessage.MessageSEQ = messageSEQ;
+        //TansmitMessage.ControlFlags = controlFlags;
+        TransmitMessage.DLC = 2;
+        TransmitMessage.PayloadData = throttle;
+        // Send message and flush
+        ErrorExt1 = MCP251XFD_TransmitMessageToFIFO(CANEXT1, &TransmitMessage, MCP251XFD_FIFO2, true);
+
+        if (ErrorExt1 != ERR_OK)
+        {
+            printf("Transmission failed: %d\n", ErrorExt1);
+        } else {
+            printf("Sent throttle: %d\n", *throttle);
         }
     } else {
         printf("FIFO full. Cannot send CAN message\n");

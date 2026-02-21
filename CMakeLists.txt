@@ -16,7 +16,9 @@ set(CMAKE_C_STANDARD 23)
 
 file(GLOB SOURCES src/*.c UOSM-Core/*.*)
 
-add_executable(${NAME} ${SOURCES})
+add_executable(${NAME} ${SOURCES}
+        UOSM-Core/Modules/CANMessageLookUpModule.c
+        UOSM-Core/Modules/InternalCommsModule.h)
 target_include_directories(${NAME} PUBLIC inc UOSM-Core/Inc UOSM-Core/Drivers UOSM-Core/Modules UOSM-Core/Utils)
 
 target_link_libraries(${NAME}
