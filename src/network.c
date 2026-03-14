@@ -11,6 +11,8 @@
 #include "ApplicationTypes.h"
 #include "msg_interpreter.h"
 
+#include "light_driver.h"
+
 #define MCP_INT_PIN 22
 
 void gpio_callback(uint gpio, uint32_t events) {
@@ -78,12 +80,29 @@ void CAN_Receive() {
                                                              &MessageTimeStamp, zFIFO);
                 if (ErrorExt1 == ERR_OK) {
                     //***** Do what you want with the message *****
-                    printf("Message received!");
-                    printf("Message ID: %d\n", ReceivedMessage.MessageID);
-                    printf("Message Timestamp: %d\n", MessageTimeStamp);
-                    printf("Message DLC: %d\n", ReceivedMessage.DLC);
+                    // printf("Message received!");
+                    // printf("Message ID: %d\n", ReceivedMessage.MessageID);
+                    // printf("Message Timestamp: %d\n", MessageTimeStamp);
+                    // printf("Message DLC: %d\n", ReceivedMessage.DLC);
+                    // // Print payload data in int
+                    // printf("Message Payload: ");
+                    // for (int i = 0; i < ReceivedMessage.DLC; i++) {
+                    //     printf("%d ", ReceivedMessage.PayloadData[i]);
+                    // }
+                    // printf("\n");
 
-                    MsgInterpreter_ProcessMessage(ReceivedMessage.MessageID,ReceivedMessage.PayloadData);
+                    if (ReceivedMessage.MessageID == 6) {
+                        // decode light
+                        // lights_status.all = (ReceivedMessage.PayloadData[0] << 24) |
+                        //                      (ReceivedMessage.PayloadData[1] << 16) |
+                        //                      (ReceivedMessage.PayloadData[2] << 8)  |
+                        //                      (ReceivedMessage.PayloadData[3]);
+                        uint32_t raw = (ReceivedMessage.PayloadData[0] << 24) | (ReceivedMessage.PayloadData[1] << 16) |
+                                       (ReceivedMessage.PayloadData[2] << 8)  | (ReceivedMessage.PayloadData[3]);
+                        setLightsStatus(raw);
+                    }
+
+                    // MsgInterpreter_ProcessMessage(ReceivedMessage.MessageID,ReceivedMessage.PayloadData);
                     gpio_put(PICO_DEFAULT_LED_PIN, 1);
 
                 }

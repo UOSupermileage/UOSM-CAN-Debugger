@@ -6,9 +6,11 @@
 #define UOSM_CAN_DEBUGGER_NETWORK_H
 
 #include <stdbool.h>
+#include "ApplicationTypes.h"
 
 bool CAN_Init();
 
 void CAN_Receive();
 void CAN_Send();
+
 #endif //UOSM_CAN_DEBUGGER_NETWORK_H

@@ -3,6 +3,7 @@
 #include <hardware/gpio.h>
 #include <tusb.h>
 #include "network.h"
+#include "light_driver.h"
 
 int main() {
 
@@ -24,20 +25,59 @@ int main() {
 
     printf("Listening for CAN\n");
 
+    flag_status_t blink;
+    uint32_t blink_delay = BLINK_DELAY; //Blink interval in milliseconds
+    // current time
+    uint32_t current_time = to_ms_since_boot(get_absolute_time());
+    // previous time
+    uint32_t previous_time = 0;
+    lightInit();
+
     while (true) {
         CAN_Receive();
 
-        //CAN_Send();
+        current_time = to_ms_since_boot(get_absolute_time());
 
-        if (tud_cdc_available()) {
-            char buf[64];
-            int count = tud_cdc_read(buf, sizeof(buf));
-            buf[count] = '\0';
+        // if (tud_cdc_available()) {
+        //     char buf[64];
+        //     int count = tud_cdc_read(buf, sizeof(buf));
+        //     buf[count] = '\0';
+        //
+        //     char send[100];
+        //     sprintf(send, "Received: %s\n", buf);
+        //     tud_cdc_write_str(send);
+        //     tud_cdc_write_flush();
+        //     CAN_Send();
+        // }
 
-            char send[100];
-            sprintf(send, "Received: %s\n", buf);
-            tud_cdc_write_str(send);
-            tud_cdc_write_flush();
+        // Print Light Status
+        printf("=== LIGHT STATUS ===\n");
+        printf(" • Hazards: %s\n", getHazardsStatus() == Set ? "ON" : "OFF");
+        printf(" • Left Turn Signal: %s\n", getLeftTurnStatus() == Set ? "ON" : "OFF");
+        printf(" • Right Turn Signal: %s\n", getRightTurnStatus() == Set ? "ON" : "OFF");
+        printf(" • Headlights: %s\n", getHeadlightsStatus() == Set ? "ON" : "OFF");
+        printf(" • Low Beams: %s\n", getLowBeamsStatus() == Set ? "ON" : "OFF");
+
+        // Code for front lights
+        if (getHazardsStatus() == Set) {
+            setHazards(blink == Set);
+        } else {
+            setLeftTurn(getLeftTurnStatus() == Set && blink == Set);
+            setRightTurn(getRightTurnStatus() == Set && blink == Set);
+        }
+
+        setHeadlights(getHeadlightsStatus() == Set);
+        RunningLightsEnabled(getLowBeamsStatus() == Set);
+
+
+        //Update blink flag
+        if (current_time - previous_time >= blink_delay) {
+            previous_time = current_time;
+            if (blink == Set) {
+                blink = Clear;
+            } else {
+                blink = Set;
+            }
         }
 
         sleep_ms(5);
