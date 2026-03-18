@@ -10,6 +10,9 @@
 #define HIGH_BEAM_PIN 7
 #define LEFT_TURN_PIN 5
 #define RIGHT_TURN_PIN 6
+#define RUNNING_LIGHTS_R_PIN 0
+#define RUNNING_LIGHTS_G_PIN 1
+#define RUNNING_LIGHTS_B_PIN 3
 
 static volatile brightness_t left_turn_lights;
 static volatile brightness_t right_turn_lights;
@@ -39,6 +42,17 @@ void lightInit() {
     gpio_init(RIGHT_TURN_PIN);
     gpio_set_dir(RIGHT_TURN_PIN, GPIO_OUT);
     gpio_put(RIGHT_TURN_PIN, 0);
+    // Running lights RGB pins gp0, gp1, gp3
+    gpio_init(RUNNING_LIGHTS_R_PIN);
+    gpio_set_dir(RUNNING_LIGHTS_R_PIN, GPIO_OUT);
+    gpio_put(RUNNING_LIGHTS_R_PIN, 0);
+    gpio_init(RUNNING_LIGHTS_G_PIN);
+    gpio_set_dir(RUNNING_LIGHTS_G_PIN, GPIO_OUT);
+    gpio_put(RUNNING_LIGHTS_G_PIN, 0);
+    gpio_init(RUNNING_LIGHTS_B_PIN);
+    gpio_set_dir(RUNNING_LIGHTS_B_PIN, GPIO_OUT);
+    gpio_put(RUNNING_LIGHTS_B_PIN, 0);
+
 }
 
 //Global setter
@@ -95,11 +109,18 @@ void setHeadlights(flag_status_t enabled) {
 // #endif
     gpio_put(HIGH_BEAM_PIN, enabled ? 1 : 0);
 }
+void setLowBeams(flag_status_t enabled) {
+    gpio_put(LOW_BEAM_PIN, enabled ? 1 : 0);
+}
+
 void RunningLightsEnabled(flag_status_t enabled){
 // #ifdef BRUCE_REAR_LIGHTS
 //     HAL_GPIO_WritePin(RunningLights_port, RunningLights_pin, enabled ? GPIO_PIN_RESET : GPIO_PIN_SET);
 // #endif
-    gpio_put(LOW_BEAM_PIN, enabled ? 1 : 0);
+    //  gpio_put(LOW_BEAM_PIN, enabled ? 1 : 0);
+    gpio_put(RUNNING_LIGHTS_R_PIN, enabled ? 1 : 0);
+    gpio_put(RUNNING_LIGHTS_G_PIN, enabled ? 1 : 0);
+    gpio_put(RUNNING_LIGHTS_B_PIN, enabled ? 1 : 0);
 }
 void BrakeLightsEnabled(flag_status_t enabled){
 // #ifdef BRUCE_REAR_LIGHTS
@@ -108,7 +129,7 @@ void BrakeLightsEnabled(flag_status_t enabled){
 }
 
 void setRunningLights() {
-    RunningLightsEnabled(lights_status.low_beams_enabled);
+    //RunningLightsEnabled(lights_status.low_beams_enabled);
 }
 
 void setBrakeLights() {

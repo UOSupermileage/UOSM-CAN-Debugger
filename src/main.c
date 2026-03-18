@@ -32,9 +32,12 @@ int main() {
     // previous time
     uint32_t previous_time = 0;
     lightInit();
-
+    uint32_t counter = 0;
+    flag_status_t print = Set;
     while (true) {
-        CAN_Receive();
+        //CAN_Receive();
+
+        //CAN_Send();
 
         current_time = to_ms_since_boot(get_absolute_time());
 
@@ -51,23 +54,37 @@ int main() {
         // }
 
         // Print Light Status
-        printf("=== LIGHT STATUS ===\n");
-        printf(" • Hazards: %s\n", getHazardsStatus() == Set ? "ON" : "OFF");
-        printf(" • Left Turn Signal: %s\n", getLeftTurnStatus() == Set ? "ON" : "OFF");
-        printf(" • Right Turn Signal: %s\n", getRightTurnStatus() == Set ? "ON" : "OFF");
-        printf(" • Headlights: %s\n", getHeadlightsStatus() == Set ? "ON" : "OFF");
-        printf(" • Low Beams: %s\n", getLowBeamsStatus() == Set ? "ON" : "OFF");
-
-        // Code for front lights
-        if (getHazardsStatus() == Set) {
-            setHazards(blink == Set);
-        } else {
-            setLeftTurn(getLeftTurnStatus() == Set && blink == Set);
-            setRightTurn(getRightTurnStatus() == Set && blink == Set);
+        if (print) {
+            if (counter % 100 == 0) { // Print every 100 iterations to avoid spamming
+                printf("=== LIGHT STATUS ===\n");
+                printf(" • Hazards: %s\n", getHazardsStatus() == Set ? "ON" : "OFF");
+                printf(" • Left Turn Signal: %s\n", getLeftTurnStatus() == Set ? "ON" : "OFF");
+                printf(" • Right Turn Signal: %s\n", getRightTurnStatus() == Set ? "ON" : "OFF");
+                printf(" • Headlights: %s\n", getHeadlightsStatus() == Set ? "ON" : "OFF");
+                printf(" • Low Beams: %s\n", getLowBeamsStatus() == Set ? "ON" : "OFF");
+                counter = 0;
+            }
         }
+//        // Code for front lights
+//        if (getHazardsStatus() == Set) {
+//            setHazards(blink == Set);
+//        } else {
+//            setLeftTurn(getLeftTurnStatus() == Set && blink == Set);
+//            setRightTurn(getRightTurnStatus() == Set && blink == Set);
+//        }
+        //LP's forced settings for testing. When commenting this, make sure to re-enable CAN receive.
 
-        setHeadlights(getHeadlightsStatus() == Set);
-        RunningLightsEnabled(getLowBeamsStatus() == Set);
+        setHazards(Set);
+        setHeadlights(Clear);
+        setLowBeams(Clear);
+        RunningLightsEnabled(Clear);
+
+//        Proper get and set logic
+//        setHeadlights(getHeadlightsStatus() == Set);
+//        setLowBeams(getLowBeamsStatus() == Set);
+//        RunningLightsEnabled(Clear);
+
+
 
 
         //Update blink flag
@@ -81,5 +98,6 @@ int main() {
         }
 
         sleep_ms(5);
+        counter++;
     }
 }

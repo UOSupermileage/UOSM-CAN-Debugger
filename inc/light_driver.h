@@ -28,6 +28,7 @@ void setLeftTurn(flag_status_t enabled);
 void setRightTurn(flag_status_t enabled);
 void setHazards(flag_status_t enabled);
 void setHeadlights(flag_status_t enabled);
+void setLowBeams(flag_status_t enabled);
 void RunningLightsEnabled(flag_status_t enabled);
 
 //Functions for brake lights
