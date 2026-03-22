@@ -35,9 +35,7 @@ int main() {
     uint32_t counter = 0;
     flag_status_t print = Set;
     while (true) {
-        //CAN_Receive();
-
-        //CAN_Send();
+        CAN_Receive();
 
         current_time = to_ms_since_boot(get_absolute_time());
 
@@ -65,27 +63,18 @@ int main() {
                 counter = 0;
             }
         }
-//        // Code for front lights
-//        if (getHazardsStatus() == Set) {
-//            setHazards(blink == Set);
-//        } else {
-//            setLeftTurn(getLeftTurnStatus() == Set && blink == Set);
-//            setRightTurn(getRightTurnStatus() == Set && blink == Set);
-//        }
-        //LP's forced settings for testing. When commenting this, make sure to re-enable CAN receive.
+        // Code for front lights
+        if (getHazardsStatus() == Set) {
+            setHazards(blink == Set);
+        } else {
+            setLeftTurn(getLeftTurnStatus() == Set && blink == Set);
+            setRightTurn(getRightTurnStatus() == Set && blink == Set);
+        }
 
-        setHazards(Set);
-        setHeadlights(Clear);
-        setLowBeams(Clear);
+//        //Proper get and set logic
+        setHeadlights(getHeadlightsStatus() == Set);
+        setLowBeams(getLowBeamsStatus() == Set);
         RunningLightsEnabled(Clear);
-
-//        Proper get and set logic
-//        setHeadlights(getHeadlightsStatus() == Set);
-//        setLowBeams(getLowBeamsStatus() == Set);
-//        RunningLightsEnabled(Clear);
-
-
-
 
         //Update blink flag
         if (current_time - previous_time >= blink_delay) {

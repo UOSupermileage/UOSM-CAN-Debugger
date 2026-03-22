@@ -87,19 +87,22 @@ flag_status_t getBrakeLightsStatus(){
 //Abstract functions over HAL
 void setLeftTurn(flag_status_t enabled) {
     // HAL_GPIO_WritePin(LeftTurn_port, LeftTurn_pin, enabled ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    gpio_put(LEFT_TURN_PIN, enabled ? 1 : 0);
+    //Use active low logic
+    gpio_put(LEFT_TURN_PIN, enabled ? 0 : 1);
 }
 
 void setHazards(flag_status_t enabled) {
     // HAL_GPIO_WritePin(LeftTurn_port, LeftTurn_pin, enabled ? GPIO_PIN_SET : GPIO_PIN_RESET);
     // HAL_GPIO_WritePin(RightTurn_port, RightTurn_pin, enabled ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    gpio_put(LEFT_TURN_PIN, enabled ? 1 : 0);
-    gpio_put(RIGHT_TURN_PIN, enabled ? 1 : 0);
+    //Use active low logic
+    gpio_put(LEFT_TURN_PIN, enabled ? 0 : 1);
+    gpio_put(RIGHT_TURN_PIN, enabled ? 0 : 1);
 }
 
 void setRightTurn(flag_status_t enabled) {
     // HAL_GPIO_WritePin(RightTurn_port, RightTurn_pin, enabled ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    gpio_put(RIGHT_TURN_PIN, enabled ? 1 : 0);
+    //Use active low logic
+    gpio_put(RIGHT_TURN_PIN, enabled ? 0 : 1);
 }
 
 void setHeadlights(flag_status_t enabled) {
@@ -118,9 +121,10 @@ void RunningLightsEnabled(flag_status_t enabled){
 //     HAL_GPIO_WritePin(RunningLights_port, RunningLights_pin, enabled ? GPIO_PIN_RESET : GPIO_PIN_SET);
 // #endif
     //  gpio_put(LOW_BEAM_PIN, enabled ? 1 : 0);
-    gpio_put(RUNNING_LIGHTS_R_PIN, enabled ? 1 : 0);
-    gpio_put(RUNNING_LIGHTS_G_PIN, enabled ? 1 : 0);
-    gpio_put(RUNNING_LIGHTS_B_PIN, enabled ? 1 : 0);
+    //Use active low logic
+    gpio_put(RUNNING_LIGHTS_R_PIN, enabled ? 0 : 1);
+    gpio_put(RUNNING_LIGHTS_G_PIN, enabled ? 0 : 1);
+    gpio_put(RUNNING_LIGHTS_B_PIN, enabled ? 0 : 1);
 }
 void BrakeLightsEnabled(flag_status_t enabled){
 // #ifdef BRUCE_REAR_LIGHTS
