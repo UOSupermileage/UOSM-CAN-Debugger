@@ -29,7 +29,11 @@ void lightInit() {
     // Low beam pin gp2
     gpio_init(LOW_BEAM_PIN);
     gpio_set_dir(LOW_BEAM_PIN, GPIO_OUT);
+#ifdef FRONT_LIGHT
     gpio_put(LOW_BEAM_PIN, 0);
+#else
+    gpio_put(LOW_BEAM_PIN, 1);
+#endif
     // High beam pin gp7
     gpio_init(HIGH_BEAM_PIN);
     gpio_set_dir(HIGH_BEAM_PIN, GPIO_OUT);

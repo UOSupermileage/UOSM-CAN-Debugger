@@ -73,7 +73,9 @@ int main() {
 
 //        //Proper get and set logic
         setHeadlights(getHeadlightsStatus() == Set);
+#ifdef FRONT_LIGHT
         setLowBeams(getLowBeamsStatus() == Set);
+#endif
         RunningLightsEnabled(Clear);
 
         //Update blink flag
