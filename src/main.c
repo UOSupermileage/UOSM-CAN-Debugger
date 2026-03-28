@@ -5,6 +5,8 @@
 #include "network.h"
 #include "light_driver.h"
 
+#define FRONT_LIGHT
+
 int main() {
 
     stdio_init_all();

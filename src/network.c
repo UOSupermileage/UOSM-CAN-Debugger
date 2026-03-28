@@ -42,8 +42,8 @@ bool CAN_Init() {
     if (ErrorExt1 != ERR_OK)
         return false;
 
-    //ErrorExt1 = MCP251XFD_StartCAN20(CANEXT1);
-    ErrorExt1 = MCP251XFD_StartCANListenOnly(CANEXT1);
+    ErrorExt1 = MCP251XFD_StartCAN20(CANEXT1);
+    //ErrorExt1 = MCP251XFD_StartCANListenOnly(CANEXT1);
     if (ErrorExt1 != ERR_OK)
         return false;
 
