@@ -88,7 +88,12 @@ static void decodeSpeed(const uint8_t *data)
 
 static void decodeMotorRPM(const uint8_t *data)
 {
-    printf("MotorRPM\n");
+    const uint32_t rpm = (uint32_t)data[0]
+                       | ((uint32_t)data[1] << 8)
+                       | ((uint32_t)data[2] << 16)
+                       | ((uint32_t)data[3] << 24);
+
+    printf("MotorRPM: %lu\n", (unsigned long)rpm);
 }
 
 static void decodeEvent(const uint8_t *data)
