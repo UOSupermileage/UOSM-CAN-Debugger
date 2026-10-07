@@ -1,1 +1,10 @@
-cmake-build-debug
+# CMake/CLion build output
+cmake-build-*/
+build/
+
+# CLion local workspace state
+.idea/workspace.xml
+
+# OS metadata
+.DS_Store
+Thumbs.db

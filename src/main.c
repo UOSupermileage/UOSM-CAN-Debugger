@@ -27,8 +27,6 @@ int main() {
     while (true) {
         CAN_Receive();
 
-        CAN_Send();
-
         if (tud_cdc_available()) {
             char buf[64];
             int count = tud_cdc_read(buf, sizeof(buf));

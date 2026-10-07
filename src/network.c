@@ -78,7 +78,7 @@ void CAN_Receive() {
                                                              &MessageTimeStamp, zFIFO);
                 if (ErrorExt1 == ERR_OK) {
                     //***** Do what you want with the message *****
-                    printf("Message received!");
+                    printf("Message received!\n");
                     printf("Message ID: %d\n", ReceivedMessage.MessageID);
                     printf("Message Timestamp: %d\n", MessageTimeStamp);
                     printf("Message DLC: %d\n", ReceivedMessage.DLC);
